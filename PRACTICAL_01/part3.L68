@@ -1,0 +1,92 @@
+00000000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 18/01/2024 14:42:51
+
+Line 1 ERROR: Illegal symbol
+00000000                             1  00001000 Starting Address
+Line 2 ERROR: Invalid syntax
+00000000                             2  Assembler used: EASy68K Editor/Assembler v5.16.01
+Line 3 ERROR: Invalid syntax
+00000000                             3  Created On: 18/01/2024 14:40:45
+00000000                             4  
+Line 5 ERROR: Illegal symbol
+00000000                             5  00000000                             1  *-----------------------------------------------------------
+Line 6 ERROR: Illegal symbol
+00000000                             6  00000000                             2  * Title      :
+Line 7 ERROR: Illegal symbol
+00000000                             7  00000000                             3  * Written by :
+Line 8 ERROR: Illegal symbol
+00000000                             8  00000000                             4  * Date       :
+Line 9 ERROR: Illegal symbol
+00000000                             9  00000000                             5  * Description:
+Line 10 ERROR: Illegal symbol
+00000000                            10  00000000                                                          6  *-----------------------------------------------------------
+Line 11 ERROR: Illegal symbol
+00000000                            11  00001000                             7          ORG    $1000
+Line 12 ERROR: Illegal symbol
+00000000                            12  00001000                             8  START:                  ; first instruction of program
+Line 13 ERROR: Illegal symbol
+00000000                            13  00001000                             9  
+Line 14 ERROR: Illegal symbol
+00000000                            14  00001000                            10  * Put program code here
+Line 15 ERROR: Illegal symbol
+00000000                            15  00001000                            11  
+Line 16 ERROR: Illegal symbol
+00000000                            16  00001000  123C 0064                 12      MOVE.B #$64,D1 ;moves 64 to D1
+Line 17 ERROR: Illegal symbol
+00000000                            17  00001004  43F9 0000101A             13      LEA text, A1   ;
+Line 18 ERROR: Illegal symbol
+00000000                            18  0000100A  303C 000E                 14      MOVE #14,D0    ;
+Line 19 ERROR: Illegal symbol
+00000000                            19  0000100E  4E4F                      15      TRAP #15       ;
+Line 20 ERROR: Illegal symbol
+00000000                            20  00001010                            16      
+Line 21 ERROR: Illegal symbol
+00000000                            21  00001010  303C 0003                 17      MOVE #3,D0     ;moves 3 to D0
+Line 22 ERROR: Illegal symbol
+00000000                            22  00001014  4E4F                      18      TRAP #15       ;
+Line 23 ERROR: Illegal symbol
+00000000                            23  00001016                            19      
+Line 24 ERROR: Illegal symbol
+00000000                            24  00001016  FFFF FFFF                 20      SIMHALT             ; halt simulator
+Line 25 ERROR: Illegal symbol
+00000000                            25  0000101A                            21      
+Line 26 ERROR: Illegal symbol
+00000000                            26  0000101A= 44 61 74 61 20 52 ...     22  text dc.b 'Data Register: ',0
+Line 27 ERROR: Illegal symbol
+00000000                            27  0000102A                            23  
+Line 28 ERROR: Illegal symbol
+00000000                            28  0000102A                            24  * Put variables and constants here
+Line 29 ERROR: Illegal symbol
+00000000                            29  0000102A                            25                          
+Line 30 ERROR: Illegal symbol
+00000000                            30  0000102A                            26                          ; last line of source
+Line 31 ERROR: Illegal symbol
+00000000                            31  0000102A                            27          END START        
+00000000                            32  
+Line 33 ERROR: Invalid opcode
+00000000                            33  No errors detected
+Line 34 ERROR: Invalid opcode
+00000000                            34  No warnings generated
+00000000                            35  
+00000000                            36  
+Line 37 ERROR: Invalid opcode
+00000000                            37  SYMBOL TABLE INFORMATION
+Line 38 ERROR: Invalid opcode
+00000000                            38  Symbol-name         Value
+Line 39 ERROR: Illegal symbol
+00000000                            39  -------------------------
+Line 40 ERROR: Invalid opcode
+00000000                            40  START               1000
+Line 41 ERROR: Invalid opcode
+00000000                            41  TEXT                101A
+00000000                            42  
+Line 43 WARNING: END directive missing, starting address not set
+
+37 errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
