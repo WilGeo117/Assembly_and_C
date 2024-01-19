@@ -10,7 +10,7 @@ START:                  ; first instruction of program
     MOVE #4,D0          ;moves 4 to D0
     TRAP #15            ;read a number from the keyboard
     MOVE #14,D0         ;moves 14 to D0
-    TRAP #15            ;
+    TRAP #15            ;halt simulator
     MOVE #3,D0          ;moves 3 to D0
     TRAP #15            ;System stops and  15
     
