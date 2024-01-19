@@ -8,11 +8,11 @@
 START:                  ; first instruction of program
     LEA text, A1        ;Loads string text into A1
     MOVE #4,D0          ;moves 4 to D0
-    TRAP #15            ;traps 15
+    TRAP #15            ;read a number from the keyboard
     MOVE #14,D0         ;moves 14 to D0
-    TRAP #15            ;traps 15
+    TRAP #15            ;
     MOVE #3,D0          ;moves 3 to D0
-    TRAP #15            ;traps 15
+    TRAP #15            ;System stops and  15
     
 * Put program code here
 
