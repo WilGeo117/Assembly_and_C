@@ -6,7 +6,7 @@
 *-----------------------------------------------------------
     ORG    $1000
 START:                  ; first instruction of program
-    LEA text, A1
+    LEA text, A1        ;Loads string 
     MOVE #4,D0          ;moves 4 to D0
     TRAP #15            ;traps 15
     MOVE #14,D0         ;moves 14 to D0
