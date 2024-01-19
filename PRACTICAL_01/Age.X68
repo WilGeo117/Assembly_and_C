@@ -8,7 +8,7 @@
 START:                  ; first instruction of program
 
 * Put program code here
-    MOVE.L #%00010011,D1 
+    MOVE.L #%00010011,D1 ;moves age(19) in hex to D1
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
