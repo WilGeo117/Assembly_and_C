@@ -10,8 +10,8 @@ START:                  ; first instruction of program
 * Put program code here
  
      MOVE.B #$64,D1 ;moves 64 to D1
-     LEA text, A1   ;
-     MOVE #14,D0    ;
+     LEA text, A1   ;Loads string text into A1
+     MOVE #14,D0    ;moves 14 to D0
      TRAP #15       ;
      
      MOVE #3,D0     ;moves 3 to D0
