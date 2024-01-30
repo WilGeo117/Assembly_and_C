@@ -2,20 +2,17 @@
 * Title      : PRACTICAL_03
 * Written by : William Geoghegan
 * Date       : 30/01/2024
-* Description: part 1 of practical 3
+* Description: Part 3 of practical 3
 *-----------------------------------------------------------
     ORG    $1000
 START:                  ; first instruction of program
 
-* Put program code here
-
-    LEA $4000, A1       ; Loads memory address to A2
-    MOVE.B #100, (A1)   ; Moves literal 100 to A2
+    LEA HEALTH, A3      ; loads HEALTH to A3
+    SUB.B #10, (A3)     ; subtracts 10 from A3 value
 
     SIMHALT             ; halt simulator
 
-* Put variables and constants here
-
+HEALTH dc.b $64         ; sets value of players health
     END    START        ; last line of source
 
 
