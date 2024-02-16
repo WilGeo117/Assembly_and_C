@@ -8,8 +8,8 @@
 START:                  ; first instruction of program
 
 INITIALISE:
-    MOVE.B #3, D0
-    MOVE.B #3, D1
+    MOVE.B #3, D0       ; move value 3 to D0
+    MOVE.B #3, D1       ; move value 3 to D1
     
 GAME_LOOP:
     CMP.B #1, D0
