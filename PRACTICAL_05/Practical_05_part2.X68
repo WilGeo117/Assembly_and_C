@@ -11,6 +11,8 @@ START:                  ; first instruction of program
     
     MOVE.B #50, D1
     MOVE.B #0, D2
+    MOVE.L (A1) +, D1
+    MOVE.L (A1) +, D2
     
 COLLISION_CHECK:
     CMP D2, D1
@@ -27,8 +29,8 @@ COLLISION:
 GAME_OVER:
     SIMHALT            
     
-PLAYER_POSITION: DC.B 10, 15
-ENEMY_POSITION: DC.B 50, 55
+PLAYER_POSITION: DC.B 10, 15, 55
+ENEMY_POSITION: DC.B 15, 50, 55
 
     END    START        ; last line of source
 
