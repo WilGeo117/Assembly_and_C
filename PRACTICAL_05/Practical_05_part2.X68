@@ -13,13 +13,14 @@ START:                  ; first instruction of program
     
     MOVE.B #50, D1
     MOVE.B #0, D2
-    MOVE.L (A1) +, D1
-    MOVE.L (A2) +, D2
-    MOVE.L (A3) +, D3
-    MOVE.L (A4) +, D4
+    MOVE.L (A1)+, D1
+    MOVE.L (A2)+, D2
+    MOVE.L (A3)+, D3
+    MOVE.L (A4)+, D4
     
 COLLISION_CHECK:
-    CMP D2, D1, D3, D4
+    CMP D2, D1
+    CMP D3, D4
     BLT NEXT_MOVE
     BEQ COLLISION
     
