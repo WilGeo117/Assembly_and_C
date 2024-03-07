@@ -85,14 +85,14 @@ HUD:
     RTS
     
 UPDATE:   
-    CMP     #0,         PLAYER_HEALTH       ; Check if health is 0
+    CMP     #0,             PLAYER_HEALTH       ; Check if health is 0
     BEQ     GAME_OVER
     RTS     
 
 
     
 TEMP:
-    CMP     #0,         RAT_HEALTH
+    CMP     #0,             RAT_HEALTH
     BEQ     MSG_BATTLE_OVER
     MOVE.B  #4,             D0              ; Player Input
     TRAP    #15
@@ -101,7 +101,6 @@ TEMP:
 *--------------------------------------------------------------------------------------------------    
                                             *COMBAT*
 RAT_COMBAT:
-    MOVE    RAT_HEALTH,     D4
     LEA     MSG_ATTACK,     A1
     MOVE.B  #14,            D0
     TRAP    #15
@@ -117,7 +116,7 @@ RAT_COMBAT:
     BEQ     HEAL_RAT
     BNE     INVALID_RAT
     
-RAT_COMBAT_2
+RAT_COMBAT_2:
     CMP     #0,             D4
     BLE     ENEMY_DEFEATED
     BSR     REDUCE_HEALTH_RAT
@@ -133,8 +132,7 @@ ATTACK_RAT:
     BSR     HUD 
     BRA     RAT_COMBAT_2
     
-ENEMY_COMBAT:                                                       * D4 ENEMY HEALTH LOCATION
-    MOVE    ENEMY_HEALTH,   D4
+ENEMY_COMBAT:
     LEA     MSG_ATTACK,     A1
     MOVE.B  #14,            D0
     TRAP    #15
@@ -143,24 +141,28 @@ ENEMY_COMBAT:                                                       * D4 ENEMY H
     TRAP    #15
     MOVE.B  #4,             D0              ; Player Input
     TRAP    #15 
+    
     CMP     #1,             D1
     BEQ     ATTACK_ENEMY
     CMP     #2,             D1
     BEQ     HEAL_ENEMY
     BNE     INVALID_ENEMY
-    CMP     #0,             ENEMY_HEALTH
-    BEQ     ENEMY_DEFEATED
+    
+ENEMY_COMBAT_2:
+    CMP     #0,             D4
+    BLE     ENEMY_DEFEATED
     BSR     REDUCE_HEALTH_ENEMY
     BRA     ENEMY_COMBAT
     
 ATTACK_ENEMY:
-    SUB.B   #DAMAGE,        D4
+    SUB.B   D5,             D4
     LEA     MSG_HIT,        A1
     MOVE.B  #14,            D0
     TRAP    #15
     MOVE.B  #4,             D0              ; Player Input
     TRAP    #15
-    RTS
+    BSR     HUD 
+    BRA     ENEMY_COMBAT_2
     
     
 MUTANT_COMBAT:  
@@ -183,6 +185,12 @@ MUTANT_COMBAT:
     BRA     MUTANT_COMBAT
     RTS
     
+MUTANT_COMBAT_2:
+    CMP     #0,             D4
+    BLE     ENEMY_DEFEATED
+    BSR     REDUCE_HEALTH_MUTANT
+    BRA     MUTANT_COMBAT
+    
 ATTACK_MUTANT: 
     SUB.B   #DAMAGE,        MUTANT_HEALTH
     LEA     MSG_HIT,        A1
@@ -200,7 +208,8 @@ HEAL_RAT:
     MOVE.B  #4,             D0              ; Player Input
     TRAP    #15 
     CMP     #100,           PLAYER_HEALTH
-    BGT     HEALTH_FIX
+    BGT     HEALTH_FIX_RAT
+    BSR     HUD
     BRA     RAT_COMBAT_2
     
 HEAL_ENEMY:
@@ -211,8 +220,9 @@ HEAL_ENEMY:
     MOVE.B  #4,             D0              ; Player Input
     TRAP    #15 
     CMP     #100,           PLAYER_HEALTH
-    BGT     HEALTH_FIX
-    BRA     ENEMY_COMBAT
+    BGT     HEALTH_FIX_ENEMY
+    BSR     HUD
+    BRA     ENEMY_COMBAT_2
 
 
 HEAL_MUTANT:
@@ -223,32 +233,34 @@ HEAL_MUTANT:
     MOVE.B  #4,             D0              ; Player Input
     TRAP    #15 
     CMP     #100,           PLAYER_HEALTH
-    BGT     HEALTH_FIX
-    BRA     MUTANT_COMBAT
+    BGT     HEALTH_FIX_MUTANT
+    BSR     HUD
+    BRA     MUTANT_COMBAT_2
 
-    
-    
-INVALID_RAT
+INVALID_RAT:
     LEA     MSG_INVALID,    A1
     MOVE.B  #14,            D0
     TRAP    #15
     BRA     RAT_COMBAT
     
-INVALID_ENEMY
+INVALID_ENEMY:
     LEA     MSG_INVALID,    A1
     MOVE.B  #14,            D0
     TRAP    #15
     BRA     ENEMY_COMBAT
     
-INVALID_MUTANT
+INVALID_MUTANT:
     LEA     MSG_INVALID,    A1
     MOVE.B  #14,            D0
     TRAP    #15
     BRA     MUTANT_COMBAT
     
-ENEMY_DEFEATED
+ENEMY_DEFEATED:
+    BSR     HUD
     LEA     MSG_BATTLE_OVER,A1
-    MOVE.B  #4,             D0              ; Player Input
+    MOVE.B  #14,            D0             
+    TRAP    #15
+    MOVE.B  #4,             D0             
     TRAP    #15
     BRA     GAME_LOOP
     RTS
@@ -258,6 +270,7 @@ P1
     LEA     PROMPT_1,   A1                                  *Rat
     MOVE.B  #14,        D0
     TRAP    #15
+    MOVE    RAT_HEALTH, D4
     BSR     RAT_COMBAT
     BRA     GAME_LOOP
     
@@ -325,39 +338,60 @@ P10
 
 *--------------------------------------------------------------------------------------------------
 REDUCE_HEALTH_RAT:
-    SUB.B   #5,               PLAYER_HEALTH 
-    LEA     MSG_RAT_ATTACK,   A1               ; Load and Draw Damage Message
-    MOVE.B  #14,              D0
+    SUB     #5,                PLAYER_HEALTH
+    MOVE.B  #14,               D0  
+    TRAP    #15 
+    BSR     HUD
+    LEA     MSG_RAT_ATTACK,    A1               ; Load and Draw Damage Message
+    MOVE.B  #14,               D0
     TRAP    #15
     RTS
     
 REDUCE_HEALTH_ENEMY:
-    SUB.B   #5,                 PLAYER_HEALTH 
-    LEA     MSG_ENEMY_ATTACK,   A1             ; Load and Draw Damage Message
-    MOVE.B  #14,                D0
+    SUB     #5,                PLAYER_HEALTH
+    MOVE.B  #14,               D0  
+    TRAP    #15 
+    BSR     HUD
+    LEA     MSG_ENEMY_ATTACK,  A1               ; Load and Draw Damage Message
+    MOVE.B  #14,               D0
     TRAP    #15
     RTS
     
 REDUCE_HEALTH_MUTANT:
-    SUB.B   #10,                PLAYER_HEALTH 
-    LEA     MSG_MUTANT_ATTACK,  A1            ; Load and Draw Damage Message
-    MOVE.B  #14,                D0
+    SUB     #10,               PLAYER_HEALTH
+    MOVE.B  #14,               D0  
+    TRAP    #15 
+    BSR     HUD
+    LEA     MSG_MUTANT_ATTACK, A1               ; Load and Draw Damage Message
+    MOVE.B  #14,               D0
     TRAP    #15
     RTS
     
+HEALTH_FIX_RAT:
+    MOVE.W  #100,  PLAYER_HEALTH
+    BRA     RAT_COMBAT_2
+    
+HEALTH_FIX_ENEMY:
+    MOVE.W  #100,  PLAYER_HEALTH
+    BRA     ENEMY_COMBAT_2
+    
+HEALTH_FIX_MUTANT:
+    MOVE.W  #100,  PLAYER_HEALTH
+    BRA     MUTANT_COMBAT_2
+    
 HEALTH_FIX:
-    MOVE.W    #100,  PLAYER_HEALTH
-    BRA       GAME_LOOP
+    MOVE.W  #100,  PLAYER_HEALTH
+    BRA     GAME_LOOP
 
 CLEAR_SCREEN:
-    MOVE.B  #11,          D0
-    MOVE.W  #$FF00,       D1
+    MOVE.B  #11,               D0
+    MOVE.W  #$FF00,            D1
     TRAP    #15
     RTS
     
 GAME_OVER:
-    LEA     MSG_GAMEOVER, A1
-    MOVE.B  #14,          D0
+    LEA     MSG_GAMEOVER,      A1
+    MOVE.B  #14,               D0
     TRAP    #15
     SIMHALT
 
@@ -413,20 +447,12 @@ MSG_RAT_ATTACK    DC.B    '-----------------------------------------------------
                   DC.B    $0D,$0A
                   DC.B    'The rat leaps at you and bites your torso'
                   DC.B    $0D,$0A
-                  DC.B    '-----------------------------------------------------------------------------------------'
-                  DC.B    $0D,$0A
-                  DC.B    'Press Enter to continue.'
-                  DC.B    $0D,$0A
-                  DC.B    '-----------------------------------------------------------------------------------------'              
+                  DC.B    '-----------------------------------------------------------------------------------------'            
                   DC.B    $0D,$0A,0  
                 
 MSG_ENEMY_ATTACK  DC.B    '-----------------------------------------------------------------------------------------'
                   DC.B    $0D,$0A
                   DC.B    'The survivor swings his knife into your side'
-                  DC.B    $0D,$0A
-                  DC.B    '-----------------------------------------------------------------------------------------'
-                  DC.B    $0D,$0A
-                  DC.B    'Press Enter to continue.' 
                   DC.B    $0D,$0A
                   DC.B    '-----------------------------------------------------------------------------------------'              
                   DC.B    $0D,$0A,0  
@@ -434,10 +460,6 @@ MSG_ENEMY_ATTACK  DC.B    '-----------------------------------------------------
 MSG_MUTANT_ATTACK DC.B    '-----------------------------------------------------------------------------------------'
                   DC.B    $0D,$0A
                   DC.B    'The Mutant punches you from above, crushing you into the ground'
-                  DC.B    $0D,$0A
-                  DC.B    '-----------------------------------------------------------------------------------------'
-                  DC.B    $0D,$0A
-                  DC.B    'Press Enter to continue.'
                   DC.B    $0D,$0A
                   DC.B    '-----------------------------------------------------------------------------------------'              
                   DC.B    $0D,$0A,0  
@@ -641,12 +663,13 @@ PROMPT_10         DC.B    '-----------------------------------------------------
 PLAYER_HEALTH     DC.W    100
 HEALING           DC.W    10
 ENEMY_HEALTH      DC.W    60
-RAT_HEALTH        DC.W    20
+RAT_HEALTH        DC.W    30
 MUTANT_HEALTH     DC.W    120
 *--------------------------------------------------------------------------------------------------
 
     END    START                    ; last line of source
     
+
 
 *~Font name~Courier New~
 *~Font size~10~
