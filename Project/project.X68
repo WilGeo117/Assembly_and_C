@@ -2,7 +2,7 @@
 * Title      : START_FROM_NOTHING_PROJECT
 * Written by : William Geoghegan
 * Date       : 23/02/2024
-* Description: An infinate loop Text based game 
+* Description: An infinite loop Text based game 
 *-----------------------------------------------------------
     ORG    $1000
 
@@ -31,43 +31,51 @@ GAME_LOOP:
     BRA     PROMPT_LOOP                 ; Call a random number for prompts
     BRA     GAME_LOOP                   ; Call GAME_LOOP
                 
-RANDOM_NUMBER:                          ; The goal is to scale the time into a 1-100 range.
-                                        ; Assuming after the AND operation, we have a reasonably random value in D1,
-    MOVEQ   #8,             D0          ; Prepare 8 in D0 for modulo operation                                                <--------- Random Number
-    DIVU    D0,             D2          ; Divide D1 by 8, result in D1 (quotient) and remainder in D1's lower word
-    SWAP    D2                          ; Swap to get remainder in lower word of D1
-    AND.W   #$00FF,         D2          ; Ensure we only deal with the lower byte
-    ADDQ.W  #1,             D2          ; Add 1 to make range 1-8 instead of 0-7
+RANDOM_NUMBER:
+    MOVE.B #8, D0                       ; Loads D1 with Time in 100's of Seconds since midnight (6 Bits)
+    TRAP #15                            ; Place time in D1
+    AND.L   #$5FFFFF, D1                ; AND 6 Bits to prevent any overflow
+    DIVU    #100, D1                    ; Divide by 100, 1000, 10000 depending on Number range required
+    SWAP    D1                          ; SWAP Higher Order Word and Lower Order Word in D1
+    ADDQ.W  #1, D1                      ; Add 1 to D1.W so number is at least 1
+    MOVE.W  D1, D2                      ; Extract the number from D1.W
+    CLR.L   D1                          ; Clear contents of D1
+    MOVE.W  D2, D1                      ; Move the generated number to D1
 
-                                        ; At this point, D1 contains a random number in the 1-5 range.
-    RTS                                 ; Return from subroutine
+    RTS
                                         
 PROMPT_LOOP:
     BSR RANDOM_NUMBER
 
-    CMP.W   #1,             D2          ; Compare D1 with 1
-    BEQ     P1                          ; If D1 is less than 1, branch to PROMPT_1
+    CMP.W   #10,             D2         ; Compare D1 with 1
+    BLE     P1                          ; If D1 is less than 1, branch to PROMPT_1
     
-    CMP.W   #2,             D2          ; Compare D1 with 2
-    BEQ     P2                          ; If D1 is equal to 2, branch to PROMPT_2
+    CMP.W   #20,             D2         ; Compare D1 with 2
+    BLE     P2                          ; If D1 is equal to 2, branch to PROMPT_2
    
-    CMP.W   #3,             D2          ; Compare D1 with 3
-    BEQ     P3                          ; If D1 is equal to 3, branch to PROMPT_3
+    CMP.W   #30,             D2         ; Compare D1 with 3
+    BLE     P3                          ; If D1 is equal to 3, branch to PROMPT_3
     
-    CMP.W   #4,             D2          ; Compare D1 with 4
-    BEQ     P4                          ; If D1 is equal to 4, branch to PROMPT_4
+    CMP.W   #40,             D2         ; Compare D1 with 4
+    BLE     P4                          ; If D1 is equal to 4, branch to PROMPT_4
     
-    CMP.W   #5,             D2          ; Compare D1 with 5
-    BEQ     P5                          ; If D1 is equal to 5, branch to PROMPT_5
+    CMP.W   #50,             D2         ; Compare D1 with 5
+    BLE     P5                          ; If D1 is equal to 5, branch to PROMPT_5
       
-    CMP.W   #6,             D2          ; Compare D1 with 6
-    BEQ     P6                          ; If D1 is equal to 6, branch to PROMPT_6
+    CMP.W   #60,             D2         ; Compare D1 with 6
+    BLE     P6                          ; If D1 is equal to 6, branch to PROMPT_6
     
-    CMP.W   #7,             D2          ; Compare D1 with 7
-    BEQ     P7                          ; If D1 is equal to 7, branch to PROMPT_7 
+    CMP.W   #70,             D2         ; Compare D1 with 7
+    BLE     P7                          ; If D1 is equal to 7, branch to PROMPT_7 
     
-    CMP.W   #8,             D2          ; Compare D1 with 8
-    BEQ     P8                          ; If D1 is equal to 8, branch to PROMPT_8
+    CMP.W   #80,             D2         ; Compare D1 with 8
+    BLE     P8                          ; If D1 is equal to 8, branch to PROMPT_8
+    
+    CMP.W   #90,             D2         ; Compare D1 with 9
+    BLE     P9                          ; If D1 is equal to 9, branch to PROMPT_9
+    
+    CMP.W   #100,            D2         ; Compare D1 with 10
+    BLE     P10                         ; If D1 is equal to 10, branch to PROMPT_10
     
     BRA     GAME_LOOP
     
@@ -174,16 +182,12 @@ MUTANT_COMBAT:
     TRAP    #15
     MOVE.B  #4,             D0              ; Player Input
     TRAP    #15 
+    
     CMP     #1,             D1
     BEQ     ATTACK_MUTANT
     CMP     #2,             D1
     BEQ     HEAL_MUTANT
     BNE     INVALID_MUTANT
-    CMP     #0,             MUTANT_HEALTH
-    BEQ     ENEMY_DEFEATED
-    BSR     REDUCE_HEALTH_MUTANT
-    BRA     MUTANT_COMBAT
-    RTS
     
 MUTANT_COMBAT_2:
     CMP     #0,             D4
@@ -192,7 +196,7 @@ MUTANT_COMBAT_2:
     BRA     MUTANT_COMBAT
     
 ATTACK_MUTANT: 
-    SUB.B   #DAMAGE,        MUTANT_HEALTH
+    SUB.B   D5,             D4
     LEA     MSG_HIT,        A1
     MOVE.B  #14,            D0
     TRAP    #15
@@ -267,75 +271,88 @@ ENEMY_DEFEATED:
 *--------------------------------------------------------------------------------------------------
                                             *PROMPTS*
 P1  
-    LEA     PROMPT_1,   A1                                  *Rat
-    MOVE.B  #14,        D0
+    LEA     PROMPT_1,       A1                                  *Rat
+    MOVE.B  #14,            D0
     TRAP    #15
-    MOVE    RAT_HEALTH, D4
+    MOVE    RAT_HEALTH,     D4
     BSR     RAT_COMBAT
     BRA     GAME_LOOP
     
 P2  
-    LEA     PROMPT_2,   A1                                  *Rock
-    MOVE.B  #14,        D0
+    LEA     PROMPT_2,       A1                                  *Rock
+    MOVE.B  #14,            D0
     TRAP    #15
-    SUB     #5,         PLAYER_HEALTH
-    MOVE.B  #4,         D0                  ; Player Input
+    SUB     #5,             PLAYER_HEALTH
+    MOVE.B  #4,             D0                  ; Player Input
     TRAP    #15
     BRA     GAME_LOOP
 P3  
-    LEA     PROMPT_3,   A1                                  *Enemy
-    MOVE.B  #14,        D0
+    LEA     PROMPT_3,       A1                                  *Enemy
+    MOVE.B  #14,            D0
     TRAP    #15
+    MOVE    ENEMY_HEALTH,   D4
     BSR     ENEMY_COMBAT
     BRA     GAME_LOOP
 P4  
-    LEA     PROMPT_4,   A1                                  *Mutant
-    MOVE.B  #14,        D0
+    LEA     PROMPT_4,       A1                                  *Mutant
+    MOVE.B  #14,            D0
     TRAP    #15
+    MOVE    MUTANT_HEALTH,  D4
     BSR     MUTANT_COMBAT
     BRA     GAME_LOOP
 P5  
-    LEA     PROMPT_5,   A1                                  *Sandstorm
-    MOVE.B  #14,        D0
+    LEA     PROMPT_5,       A1                                  *Sandstorm
+    MOVE.B  #14,            D0
     TRAP    #15
-    SUB     #10,        PLAYER_HEALTH
-    MOVE.B  #4,         D0                  ; Player Input
+    SUB     #10,            PLAYER_HEALTH
+    MOVE.B  #4,             D0                  ; Player Input
     TRAP    #15
     BRA     GAME_LOOP
     
 P6  
-    LEA     PROMPT_6,   A1                                  *heat
-    MOVE.B  #14,        D0
+    LEA     PROMPT_6,       A1                                  *heat
+    MOVE.B  #14,            D0
     TRAP    #15
-    MOVE.B  #4,         D0                  ; Player Input
+    MOVE.B  #4,             D0                  ; Player Input
     TRAP    #15
     BRA     GAME_LOOP
     
 P7  
-    LEA     PROMPT_7,   A1                                  *weapon
-    MOVE.B  #14,        D0
+    LEA     PROMPT_7,       A1                                  *weapon
+    MOVE.B  #14,            D0
     TRAP    #15
-    ADD.B   #5,         DAMAGE
-    MOVE.B  #4,         D0                  ; Player Input
+    ADD.B   #5,             DAMAGE
+    MOVE.B  #4,             D0                  ; Player Input
     TRAP    #15
     BRA     GAME_LOOP
     
 P8  
-    LEA     PROMPT_8,   A1                                  *Puddle
-    MOVE.B  #14,        D0
+    LEA     PROMPT_8,       A1                                  *Puddle
+    MOVE.B  #14,            D0
     TRAP    #15
-    ADD     #20,        PLAYER_HEALTH
-    CMP     #100,       PLAYER_HEALTH
+    ADD     #20,            PLAYER_HEALTH
+    CMP     #100,           PLAYER_HEALTH
     BGT     HEALTH_FIX   
-    MOVE.B  #4,         D0                  ; Player Input
+    MOVE.B  #4,             D0                  ; Player Input
     TRAP    #15
     BRA     GAME_LOOP
     
 P9
-
+    LEA     PROMPT_9,       A1                                  *Rummaging
+    MOVE.B  #14,            D0
+    TRAP    #15
+    MOVE.B  #4,             D0                  ; Player Input
+    TRAP    #15
+    BRA     GAME_LOOP
 
 P10
-
+    LEA     PROMPT_10,      A1                                  *Murder
+    MOVE.B  #14,            D0
+    TRAP    #15
+    MOVE.B  #4,             D0                  ; Player Input
+    TRAP    #15
+    BRA     GAME_LOOP
+    
 *--------------------------------------------------------------------------------------------------
 REDUCE_HEALTH_RAT:
     SUB     #5,                PLAYER_HEALTH
@@ -592,6 +609,7 @@ PROMPT_6          DC.B    '-----------------------------------------------------
                   DC.B    $0D,$0A
                   DC.B    '-----------------------------------------------------------------------------------------'              
                   DC.B    $0D,$0A,0
+                  
 *--------------------------------------------------------------------------------------------------
                                                 *PROMPTS*
                                                  *GOOD*
@@ -631,11 +649,9 @@ PROMPT_8          DC.B    '-----------------------------------------------------
                   
 PROMPT_9          DC.B    '-----------------------------------------------------------------------------------------'
                   DC.B    $0D,$0A
-                  DC.B    ' '
+                  DC.B    'You can hear the rummaging of debris in the broken down buildings,'
                   DC.B    $0D,$0A 
-                  DC.B    '-----------------------------------------------------------------------------------------'
-                  DC.B    $0D,$0A
-                  DC.B    ' '
+                  DC.B    'You know its probably best to stay out of them for now'
                   DC.B    $0D,$0A
                   DC.B    '-----------------------------------------------------------------------------------------'
                   DC.B    $0D,$0A
@@ -646,11 +662,11 @@ PROMPT_9          DC.B    '-----------------------------------------------------
                   
 PROMPT_10         DC.B    '-----------------------------------------------------------------------------------------'
                   DC.B    $0D,$0A
-                  DC.B    ' '
+                  DC.B    'Screams can be heard in the distance which is shortly followed by the sound'
                   DC.B    $0D,$0A 
-                  DC.B    '-----------------------------------------------------------------------------------------'
+                  DC.B    'of a gunshot, you turn the other way and continue walking,'
                   DC.B    $0D,$0A
-                  DC.B    ' '
+                  DC.B    'better him than you'
                   DC.B    $0D,$0A
                   DC.B    '-----------------------------------------------------------------------------------------'
                   DC.B    $0D,$0A
@@ -669,6 +685,7 @@ MUTANT_HEALTH     DC.W    120
 
     END    START                    ; last line of source
     
+
 
 
 *~Font name~Courier New~
