@@ -875,7 +875,7 @@ PROMPT_9          DC.B    '-----------------------------------------------------
                   DC.B    $0D,$0A
                   DC.B    'in the air from an explosion. you fall back on the ground in pain'
                   DC.B    $0D,$0A 
-                  DC.B    'Who is planting landmines in the appocolipse!?'
+                  DC.B    'Who is planting landmines in the apocolipse!?'
                   DC.B    $0D,$0A
                   DC.B    '-----------------------------------------------------------------------------------------'
                   DC.B    $0D,$0A
