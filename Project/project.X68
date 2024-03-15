@@ -281,7 +281,7 @@ CORPSE_COMBAT:
     CMP     #1,             D1
     BEQ     ATTACK_CORPSE
     CMP     #2,             D1
-    BEQ     HEAL_RAT
+    BEQ     HEAL_CORPSE
     BNE     INVALID_CORPSE
     
 CORPSE_COMBAT_2:
@@ -1046,6 +1046,8 @@ PLANT_HEALTH      DC.W    75
 
     END    START                    ; last line of source
     
+
+
 
 
 
