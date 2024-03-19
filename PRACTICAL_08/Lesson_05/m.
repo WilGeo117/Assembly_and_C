@@ -1,23 +1,23 @@
 #include "stdio.h" // standard IO header file
 
-const int MAX_VALUE = 100;
-const float PI = 3.14;
-
 int main()
 {
-    const int MIN_VALUE = 10;
+    // Unary operator example
+    // Unary -a operates on single operand
+    int a = 10;
+    int b = -a;
+    printf("Unary Example: %d\n", b);
+    b = +a;
 
-    // Call to printf function MAX_VALUE is substituted for %d
-    printf("Value of MAX_VALUE is %d\n", MAX_VALUE);
+    // Binary operator example
+    // Binary plus operates on two operands
+    int total = a + b;
+    printf("Binary Example: %d\n", total);
 
-    printf("Value of PI is %.2f\n", PI);
-
-    printf("Value of MIN_VALUE is %d\n", MIN_VALUE);
-
-    // Prints out 16 as 0x makes the value a HEX value 10 which is 16 in base 10
-    const int LITERAL = 0x10;
-
-    printf("Value of LITERAL is %d\n", LITERAL);
+    // Ternary operator example
+    // Ternary conditional operator operates on three operands
+    char *result = (total % 2 == 0) ? "even" : "odd";
+    printf("Ternary Example: %d is %s\n", total, result);
 
     return 0;
 }
