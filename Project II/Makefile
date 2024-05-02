@@ -4,7 +4,7 @@ LD=ld #Lmainker
 LDFLAGS= #Linker flags
 SOURCES=$(wildcard ./*.asm) #Sources
 OBJECTS=$(SOURCES:.asm=.o) #Object files
-EXECUTABLE=project.asm
+EXECUTABLE=Project_II
 
 #Check version
 all:$(SOURCES) $(EXECUTABLE)
