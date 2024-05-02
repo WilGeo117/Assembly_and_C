@@ -45,18 +45,29 @@ _start:
     ; Add the two numbers
     add     rax,    r8              ; add first number to second number
 
-    ; Print the result
-    mov     rdx,    result_msg_len  ; length of the result message
-    mov     rsi,    result_msg      ; address of the result message
-    mov     rdi,    1               ; file descriptor (stdout)
-    mov     rax,    1               ; system call number (sys_write)
-    syscall                         ; call kernel
+    ; Convert the sum back to ASCII
+    mov     rcx,    10              ; base 10 for conversion
+    mov     rbx,    rax             ; store the sum in rbx
+    mov     rdi,    result          ; destination buffer for result
+    mov     rsi,    result + 20     ; starting address for buffer
+    mov     rax,    0               ; clear rax
 
-    ; Print the result of addition
-    mov     rdx,    64              ; length of the result
-    mov     rsi,    result          ; address of the result
-    mov     rdi,    1               ; file descriptor (stdout)
+.convert_loop:
+    dec     rsi                     ; move buffer pointer
+    xor     rdx,    rdx             ; clear rdx
+    div     rcx                     ; divide rbx by 10
+    add     dl,     '0'             ; convert remainder to ASCII
+    mov     [rsi],  dl              ; store ASCII character in buffer
+    test    rbx,    rbx             ; check if quotient is zero
+    jnz     .convert_loop           ; loop until quotient is zero
+
+    ; Calculate the length of the result
+    sub     rsi,    result + 20     ; calculate length of result
+    mov     rdx,    rsi             ; move length to rdx
+
+    ; Print the result
     mov     rax,    1               ; system call number (sys_write)
+    mov     rdi,    1               ; file descriptor (stdout)
     syscall                         ; call kernel
 
     ; Exit
@@ -84,12 +95,10 @@ atoi:
 section .bss
     num1            resb    64      ; Reserve space for first number
     num2            resb    64      ; Reserve space for second number
-    result          resb    64      ; Reserve space for result
+    result          resb    20      ; Reserve space for result
 
 section .data
-    prompt1         db  'Enter First Number: ', 0    ; String to be printed for first number
-    prompt1_length  equ $ - prompt1                   ; Length of the string for first number
-    prompt2         db  'Enter Second Number: ', 0   ; String to be printed for second number
-    prompt2_length  equ $ - prompt2                   ; Length of the string for second number
-    result_msg      db  'Result is: ', 0             ; Result message
-    result_msg_len  equ $ - result_msg               ; Length of the result message
+    prompt1         db  'Enter First Number: ', 0   ; String to be printed for first number
+    prompt1_length  equ $ - prompt1                  ; Length of the string for first number
+    prompt2         db  'Enter Second Number: ', 0  ; String to be printed for second number
+    prompt2_length  equ $ - prompt2                  ; Length of the string for second number
