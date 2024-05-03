@@ -30,20 +30,7 @@ _start:
     mov     rdi,    0               ; file descriptor (stdin)
     mov     rax,    0               ; system call number (sys_read)
     syscall                         ; call kernel
-
-    ; Convert ASCII input to integer for first number
-    xor     rdx,    rdx             ; clear rdx for later use
-    mov     rsi,    num1            ; pointer to the string
-    call    atoi                    ; convert ASCII to integer
-    mov     r8,     rax             ; store the result in r8
-
-    ; Convert ASCII input to integer for second number
-    xor     rdx,    rdx             ; clear rdx for later use
-    mov     rsi,    num2            ; pointer to the string
-    call    atoi                    ; convert ASCII to integer
-
-    ; Add the two numbers
-    add     rax,    r8              ; add first number to second number
+    call    Adder1
 
     ; Print the result
     mov     rdx,    result_msg_len  ; length of the result message
@@ -79,6 +66,18 @@ atoi:
     jmp     .loop                   ; Repeat for next digit
 .done:
     ret
+
+Adder1:                    ; subroutine to add numbers
+    mov     rax, [num1]         ; load num1 into rax
+    sub     rax, '0'            ; convert from ASCII to integer
+
+    mov     rbx, [num2]         ; load num2 into rbx
+    sub     rbx, '0'            ; convert from ASCII to integer
+
+    add     rax, rbx            ; add rax and rbx
+    add     rax, '0'            ; convert back to ASCII
+    mov     [result], rax       ; store result
+    ret                         ; return from subroutine
 
 ; DATA SECTION
 section .bss
